@@ -1,5 +1,4 @@
 import { Highlightable } from '@angular/cdk/a11y';
-import { NgClass } from '@angular/common';
 import { Component, HostBinding, Input } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatListItem } from '@angular/material/list';

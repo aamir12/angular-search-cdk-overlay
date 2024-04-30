@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, HostBinding, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, computed, inject } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, computed, inject } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { CdkConnectedOverlay, OverlayModule } from '@angular/cdk/overlay';
 import { SearchBarService } from '../../services/search-bar.service';
 
 import { NgClass } from '@angular/common';
-import { A11yModule, ActiveDescendantKeyManager, Highlightable } from '@angular/cdk/a11y';
+import { A11yModule, ActiveDescendantKeyManager } from '@angular/cdk/a11y';
 import { MatDivider } from '@angular/material/divider';
 import {  MatActionList } from '@angular/material/list';
 import { ListItemComponent } from './list-item/list-item.component';
