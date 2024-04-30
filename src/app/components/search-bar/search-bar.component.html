@@ -9,7 +9,7 @@
 	 placeholder="Search my app"
 	(click)="onInputFocus()"
 	[value]="searchTerm()"
-	(keydown.ENTER)="search(searchInput.value)" />
+	(keydown.ENTER)="onSearch(searchInput.value)" />
 
 	@if (searchTerm()) {
 		<button mat-icon-button (click)="onClear()" class="closed-button">
@@ -20,7 +20,19 @@
 
 <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="overlayPosition" [cdkConnectedOverlayOpen]="overlayOpen()"
 	(overlayOutsideClick)="overlayOpen.set(false)">
-	<app-search-overlay />
+	<!-- <app-search-overlay /> -->
+
+	<!-- cdkTrapFocus [cdkTrapFocusAutoCapture]="true" -->
+	<div class="overlay-container mat-elevation-z2" role="listbox" >
+    <mat-divider />
+		<!-- cdkFocusRegionStart -->
+    <mat-action-list >
+        @for (search of recentSearches(); track search ) {
+            <app-list-item [searchFn]="searchFn" [onDeleteRecentSearchFn]="onDeleteRecentSearchFn" [item]="search"></app-list-item>
+        }
+    </mat-action-list>
+</div>
+
 </ng-template>
 
 <!-- 

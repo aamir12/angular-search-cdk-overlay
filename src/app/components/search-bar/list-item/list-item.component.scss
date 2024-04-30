@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+}
+
+.mdc-list-item {
+  display: flex;
+  align-items: center;
+}
+
+.historyIcon {
+  padding-right: 10px;
+}
+
+:host.active {
+  background-color: #f8f8ff;
+}
