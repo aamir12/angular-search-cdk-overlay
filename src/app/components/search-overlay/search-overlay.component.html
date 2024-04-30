@@ -1,0 +1,14 @@
+<div class="overlay-container mat-elevation-z2" cdkTrapFocus [cdkTrapFocusAutoCapture]="true" >
+    <mat-divider />
+    <mat-action-list cdkFocusRegionStart>
+        @for (search of recentSearches(); track search ) {
+            <mat-list-item (click)="performSearch(search)">
+                <mat-icon matListItemIcon>history</mat-icon>
+                <h3 matListItemTitle>{{search}}</h3>
+                <button matListItemMeta mat-icon-button (click)="onDeleteRecentSearch(search)">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </mat-list-item>
+        }
+    </mat-action-list>
+</div>

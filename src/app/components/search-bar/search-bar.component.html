@@ -1,0 +1,30 @@
+<div class="search-bar-container" cdkOverlayOrigin #overlayPosition="cdkOverlayOrigin"
+[ngClass]="{'opened mat-elevation-z2': overlayOpen()}"
+>
+	<button mat-icon-button>
+		<mat-icon>search</mat-icon>
+	</button>
+	<input
+	 #searchInput
+	 placeholder="Search my app"
+	(click)="onInputFocus()"
+	[value]="searchTerm()"
+	(keydown.ENTER)="search(searchInput.value)" />
+
+	@if (searchTerm()) {
+		<button mat-icon-button (click)="onClear()" class="closed-button">
+			<mat-icon>close</mat-icon>
+		</button>
+	}
+</div>
+
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="overlayPosition" [cdkConnectedOverlayOpen]="overlayOpen()"
+	(overlayOutsideClick)="overlayOpen.set(false)">
+	<app-search-overlay />
+</ng-template>
+
+<!-- 
+
+cdkOverlayOrigin: it told the angular where the overlay is going to be placed. beside this element
+
+ -->
