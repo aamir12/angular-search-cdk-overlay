@@ -7,9 +7,8 @@ import { SearchBarService } from '../../services/search-bar.service';
 import { NgClass } from '@angular/common';
 import { A11yModule, ActiveDescendantKeyManager, Highlightable } from '@angular/cdk/a11y';
 import { MatDivider } from '@angular/material/divider';
-import { MatActionList, MatListItem, MatListModule } from '@angular/material/list';
+import {  MatActionList } from '@angular/material/list';
 import { ListItemComponent } from './list-item/list-item.component';
-import { ENTER } from '@angular/cdk/keycodes';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -19,32 +18,31 @@ import { Subject, takeUntil } from 'rxjs';
     MatIconButton,
     MatIcon,
     OverlayModule,
-    // SearchOverlayComponent,
     NgClass,
     A11yModule,
     MatDivider,
-    MatListModule,
+    MatActionList,
     ListItemComponent
   ],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.scss'
 })
-export class SearchBarComponent implements OnInit, AfterViewInit,Highlightable, OnDestroy{
+export class SearchBarComponent implements OnInit, AfterViewInit, OnDestroy{
   @ViewChild(CdkConnectedOverlay,{static:true}) private connectedOverlay!: CdkConnectedOverlay;
 
   @ViewChildren(ListItemComponent) matlistitems! :QueryList<ListItemComponent>
 
   private keyManager!: ActiveDescendantKeyManager<ListItemComponent>;
   searchBarService = inject(SearchBarService); 
-  overlayOpen = this.searchBarService.overlayOpen;
-  searchTerm = this.searchBarService.searchTerm;
-  private _isActive = false;
+  overlayOpen = this.searchBarService.overlayOpenSig;
+  searchTerm = this.searchBarService.searchTermSig;
   searchFn: (search:string) => void = () => {};
   onDeleteRecentSearchFn : (searchTerm:string) => void = () => {};
-
   private readonly destroy: Subject<void> = new Subject<void>();
   
-  constructor() {}
+  recentSearches = computed(() => {
+    return this.searchBarService.recentSearches().slice(0,5);
+  }) 
   ngOnInit(): void {
     this.searchFn = this.onSearch.bind(this);
     this.onDeleteRecentSearchFn = this.onDeleteRecentSearch.bind(this);
@@ -53,8 +51,8 @@ export class SearchBarComponent implements OnInit, AfterViewInit,Highlightable, 
     .pipe(takeUntil(this.destroy.asObservable()))
     .subscribe((event:KeyboardEvent) => {
       this.keyManager.onKeydown(event);
-      if(this.keyManager.activeItem?.item) {
-        this.searchTerm.set(this.keyManager.activeItem?.item);
+      if(this.keyManager?.activeItem?.item) {
+        this.searchBarService.setSearchTerm(this.keyManager.activeItem.item);
       }
         
     })
@@ -64,12 +62,12 @@ export class SearchBarComponent implements OnInit, AfterViewInit,Highlightable, 
     this.keyManager = new ActiveDescendantKeyManager(this.matlistitems).withWrap();
   }
 
-  onInputFocus() {
+  onSearchInputFocus() {
     if(this.searchBarService.recentSearches().length === 0) {
-      this.overlayOpen.set(false);
+      this.searchBarService.setOverlayOpen(false);
       return;
     }
-    this.overlayOpen.set(true);
+    this.searchBarService.setOverlayOpen(true);
   }
   onSearch(searchTerm:string) {
     const search = searchTerm.trim();
@@ -77,35 +75,19 @@ export class SearchBarComponent implements OnInit, AfterViewInit,Highlightable, 
       return;
     }
 
-    this.searchBarService.search(search);
+    this.searchBarService.onSearch(search);
   }
 
   onClear() {
     this.searchBarService.clearSearch();
   }
 
-  recentSearches = computed(() => {
-    return this.searchBarService.recentSearches().slice(0,5);
-  }) 
-
   onDeleteRecentSearch(searchTerm:string) {
     this.searchBarService.removeFromRecentSearches(searchTerm);
   } 
 
-  performSearch(search:string) {
-    this.searchBarService.search(search);
-  }
-
-  @HostBinding('class.active') get isActive() {
-    return this._isActive;
-  };
-
-  setActiveStyles() {
-    this._isActive = true;
-  };
-
-  setInactiveStyles() {
-    this._isActive = false;
+  overlayClickOutside() {
+    this.searchBarService.setOverlayOpen(false);
   }
 
   ngOnDestroy(): void {

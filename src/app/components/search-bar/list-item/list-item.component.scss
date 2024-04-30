@@ -7,8 +7,12 @@
   align-items: center;
 }
 
-.historyIcon {
+.history-icon {
   padding-right: 10px;
+}
+
+.delete-btn {
+  cursor: pointer;
 }
 
 :host.active {
