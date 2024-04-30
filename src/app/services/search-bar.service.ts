@@ -1,19 +1,31 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchBarService {
 
-  overlayOpen = signal(false);
+  private overlayOpen = signal(false);
+  overlayOpenSig = computed(() => this.overlayOpen());
+  private searchTerm = signal('');
+  searchTermSig = computed(() => this.searchTerm());
+
+  
+
   RS_KEY = 'recentSearch'
   recentSearches = signal<string[]>(
     JSON.parse(window.localStorage.getItem(this.RS_KEY) || '[]')
   );
-  searchTerm = signal('');
 
-  search(searchTerm:string) {
-    //Perfomm the search
+  //Effects 
+  saveLocalStorage = effect(() => {
+    window.localStorage.setItem(
+      this.RS_KEY, 
+      JSON.stringify(this.recentSearches())
+    );
+  })
+
+  onSearch(searchTerm:string) {
     this.searchTerm.set(searchTerm);
     this.overlayOpen.set(false);
     this.addToRecentSearches(searchTerm);
@@ -38,11 +50,12 @@ export class SearchBarService {
     this.searchTerm.set('');
   }
  
+  setOverlayOpen(isOpen:boolean) {
+    this.overlayOpen.set(isOpen)
+  }
 
-  saveLocalStorage = effect(() => {
-    window.localStorage.setItem(
-      this.RS_KEY, 
-      JSON.stringify(this.recentSearches())
-    );
-  })
+  setSearchTerm(searchTerm:string) {
+    this.searchTerm.set(searchTerm)
+  }
+  
 }

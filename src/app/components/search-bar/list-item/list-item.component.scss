@@ -1,0 +1,20 @@
+:host {
+  display: flex;
+}
+
+.mdc-list-item {
+  display: flex;
+  align-items: center;
+}
+
+.history-icon {
+  padding-right: 10px;
+}
+
+.delete-btn {
+  cursor: pointer;
+}
+
+:host.active {
+  background-color: #f8f8ff;
+}
